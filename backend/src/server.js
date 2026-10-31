@@ -3,14 +3,24 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const db = require('./database');
+const usuariosRoutes = require('./routes/usuariosRoutes');
+const helmet = require('helmet');
+const autenticarToken = require('./middlewares/authMiddleware');
+const cursosRoutes = require('./routes/cursosRoutes');
+const questoesRoutes = require('./routes/questoesRoutes');
+const simuladosRoutes = require('./routes/simuladosRoutes');
 
 console.log('USUARIO:', process.env.DB_USER);
 console.log('BANCO:', process.env.DB_NAME);
 
 const app = express();
-
+app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use('/usuarios', usuariosRoutes);
+app.use('/cursos', cursosRoutes);
+app.use('/questoes', questoesRoutes);
+app.use('/simulados', simuladosRoutes);
 
 app.get('/', (req, res) => {
     res.json({
@@ -34,6 +44,15 @@ app.get('/teste-db', async (req, res) => {
         });
     }
 });
+
+
+app.get('/perfil', autenticarToken, (req, res) => {
+    res.status(200).json({
+        mensagem: 'Acesso autorizado!',
+        usuario: req.usuario
+    });
+});
+
 
 const PORT = 3000;
 
