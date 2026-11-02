@@ -8,7 +8,6 @@ const {
 
 const router = express.Router();
 
-// Rota de cadastro de usuários
 router.post(
     '/',
     [

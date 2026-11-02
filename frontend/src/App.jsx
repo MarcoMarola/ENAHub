@@ -2,15 +2,63 @@
 import { useState } from 'react';
 import Dashboard from './pages/Dashboard';
 import Questoes from './pages/Questoes';
+import Historico from './pages/Historico';
+import Cadastro from './pages/Cadastro';
+import { useEffect, useState } from 'react';
 
 function App() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [mensagem, setMensagem] = useState('');
     const [carregando, setCarregando] = useState(false);
-    const [usuario, setUsuario] = useState(null);
-    const [cursoSelecionado, setCursoSelecionado] = useState(null);
+    const [verificandoSessao, setVerificandoSessao] = useState(true);
 
+    const [usuario, setUsuario] = useState(null);
+
+    const [cursoSelecionado, setCursoSelecionado] = useState(null);
+    const [mostrarHistorico, setMostrarHistorico] = useState(false);
+    const [mostrarCadastro, setMostrarCadastro] = useState(false);
+
+    useEffect(() => {
+    const recuperarSessao = async () => {
+        const token = sessionStorage.getItem('token');
+
+        if (!token) {
+            setVerificandoSessao(false);
+            return;
+        }
+
+        try {
+            const resposta = await fetch(
+                'http://localhost:3000/usuarios/me',
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (!resposta.ok) {
+                throw new Error('Sessão inválida ou expirada.');
+            }
+
+            const dados = await resposta.json();
+
+            setUsuario(dados.usuario);
+
+        } catch (erro) {
+            console.error('Erro ao recuperar sessão:', erro);
+
+            sessionStorage.removeItem('token');
+            setUsuario(null);
+
+        } finally {
+            setVerificandoSessao(false);
+        }
+    };
+
+    recuperarSessao();
+}, []);
     const fazerLogin = async (evento) => {
         evento.preventDefault();
 
@@ -35,25 +83,21 @@ function App() {
             const dados = await resposta.json();
 
             if (!resposta.ok) {
-                setMensagem(
-                    dados.mensagem || 'Erro ao entrar.'
-                );
+                setMensagem(dados.mensagem || 'Erro ao entrar.');
                 return;
             }
 
-            // Guardar token JWT
             sessionStorage.setItem('token', dados.token);
 
-            // Guardar usuário autenticado
             setUsuario(dados.usuario);
+
+            setCursoSelecionado(null);
+            setMostrarHistorico(false);
+            setMostrarCadastro(false);
 
         } catch (erro) {
             console.error('Erro no login:', erro);
-
-            setMensagem(
-                'Não foi possível conectar ao servidor.'
-            );
-
+            setMensagem('Não foi possível conectar ao servidor.');
         } finally {
             setCarregando(false);
         }
@@ -67,28 +111,59 @@ function App() {
         setSenha('');
         setMensagem('');
         setCursoSelecionado(null);
+        setMostrarHistorico(false);
+        setMostrarCadastro(false);
     };
 
-    
-if (usuario) {
-    if (cursoSelecionado) {
+    if (verificandoSessao) {
+    return (
+        <div className="container d-flex justify-content-center align-items-center min-vh-100">
+            <div className="text-center">
+                <div
+                    className="spinner-border text-primary mb-3"
+                    role="status"
+                />
+                <p>Verificando sessão...</p>
+            </div>
+        </div>
+    );
+}
+
+    if (usuario) {
+        if (mostrarHistorico) {
+            return (
+                <Historico
+                    onVoltar={() => setMostrarHistorico(false)}
+                />
+            );
+        }
+
+        if (cursoSelecionado) {
+            return (
+                <Questoes
+                    curso={cursoSelecionado}
+                    onVoltar={() => setCursoSelecionado(null)}
+                />
+            );
+        }
+
         return (
-            <Questoes
-                curso={cursoSelecionado}
-                onVoltar={() => setCursoSelecionado(null)}
+            <Dashboard
+                usuario={usuario}
+                onSair={sair}
+                onEstudar={(curso) => setCursoSelecionado(curso)}
+                onHistorico={() => setMostrarHistorico(true)}
             />
         );
     }
 
-    return (
-        <Dashboard
-            usuario={usuario}
-            onSair={sair}
-            onEstudar={(curso) => setCursoSelecionado(curso)}
-        />
-    );
-}
-
+    if (mostrarCadastro) {
+        return (
+            <Cadastro
+                onVoltar={() => setMostrarCadastro(false)}
+            />
+        );
+    }
 
     return (
         <div className="container d-flex justify-content-center align-items-center min-vh-100">
@@ -123,9 +198,7 @@ if (usuario) {
                             className="form-control"
                             placeholder="Digite seu e-mail"
                             value={email}
-                            onChange={(e) =>
-                                setEmail(e.target.value)
-                            }
+                            onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                     </div>
@@ -144,9 +217,7 @@ if (usuario) {
                             className="form-control"
                             placeholder="Digite sua senha"
                             value={senha}
-                            onChange={(e) =>
-                                setSenha(e.target.value)
-                            }
+                            onChange={(e) => setSenha(e.target.value)}
                             required
                         />
                     </div>
@@ -162,11 +233,20 @@ if (usuario) {
                         className="btn btn-primary w-100"
                         disabled={carregando}
                     >
-                        {carregando
-                            ? 'Entrando...'
-                            : 'Entrar'}
+                        {carregando ? 'Entrando...' : 'Entrar'}
                     </button>
                 </form>
+
+                <button
+                    type="button"
+                    className="btn btn-link w-100 mt-3"
+                    onClick={() => {
+                        setMensagem('');
+                        setMostrarCadastro(true);
+                    }}
+                >
+                    Não tem uma conta? Cadastre-se
+                </button>
             </div>
         </div>
     );

@@ -58,7 +58,6 @@ const loginUsuario = async (req, res) => {
     try {
         const { email, senha } = req.body;
 
-        // Busca o usuário pelo e-mail
         const [usuarios] = await db.query(
             'SELECT id, nome, email, senha, curso_id FROM usuarios WHERE email = ?',
             [email]
@@ -72,7 +71,6 @@ const loginUsuario = async (req, res) => {
 
         const usuario = usuarios[0];
 
-        // Compara a senha informada com o hash armazenado
         const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
 
         if (!senhaCorreta) {
@@ -81,12 +79,19 @@ const loginUsuario = async (req, res) => {
             });
         }
 
-        // Gera um token JWT com validade de 2 horas
         const token = jwt.sign(
-            { id: usuario.id },
-            process.env.JWT_SECRET,
-            { expiresIn: '2h', algorithm: 'HS256' }
-        );
+    {
+        id: usuario.id,
+        nome: usuario.nome,
+        email: usuario.email,
+        curso_id: usuario.curso_id
+    },
+    process.env.JWT_SECRET,
+    {
+        expiresIn: '2h',
+        algorithm: 'HS256'
+    }
+);
 
         return res.status(200).json({
             mensagem: 'Login realizado com sucesso!',

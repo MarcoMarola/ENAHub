@@ -1,5 +1,7 @@
 
 const jwt = require('jsonwebtoken');
+const autenticarToken = require('../middlewares/authMiddleware');
+
 
 const autenticarToken = (req, res, next) => {
     const authorization = req.headers.authorization;
@@ -28,5 +30,11 @@ const autenticarToken = (req, res, next) => {
         });
     }
 };
+
+router.get('/me', autenticarToken, (req, res) => {
+    res.status(200).json({
+        usuario: req.usuario
+    });s
+});
 
 module.exports = autenticarToken;
