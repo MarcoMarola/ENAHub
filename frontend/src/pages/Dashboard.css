@@ -1,0 +1,157 @@
+
+.dashboard-page {
+    min-height: 100vh;
+    padding-bottom: 60px;
+}
+
+.dashboard-nav {
+    background: rgba(12, 17, 33, 0.85);
+    border-bottom: 1px solid #28334d;
+    padding: 20px 0;
+    margin-bottom: 36px;
+}
+
+.dashboard-nav-conteudo,
+.dashboard-marca,
+.dashboard-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.dashboard-nav-conteudo {
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.dashboard-menu {
+    flex-wrap: wrap;
+}
+
+.dashboard-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #7851e8, #a16dff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.dashboard-marca h1 {
+    color: white;
+    font-size: 26px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.dashboard-menu button {
+    background: #19223a;
+    border: 1px solid #303c58;
+    box-shadow: none;
+    color: #e5e9f5;
+    padding: 10px 16px;
+}
+
+.dashboard-menu .dashboard-sair {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.25);
+    color: #fca5a5;
+}
+
+.dashboard-boas-vindas {
+    background: linear-gradient(120deg, #1c2445, #151b32);
+    border: 1px solid #30385b;
+    border-radius: 22px;
+    padding: 36px;
+    margin-bottom: 38px;
+}
+
+.dashboard-boas-vindas span {
+    color: #c4adff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.dashboard-boas-vindas h2 {
+    color: white;
+    font-size: clamp(26px, 4vw, 36px);
+    font-weight: 800;
+    margin: 12px 0;
+}
+
+.dashboard-boas-vindas p {
+    color: #aebbd5;
+    max-width: 600px;
+    line-height: 1.8;
+}
+
+.dashboard-titulo {
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.dashboard-subtitulo {
+    color: #aab4cb;
+    margin-bottom: 26px;
+}
+
+.dashboard-card {
+    background: #141c30;
+    border: 1px solid #2c3753;
+    border-radius: 20px;
+    padding: 28px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dashboard-icone {
+    width: 54px;
+    height: 54px;
+    border-radius: 15px;
+    background: rgba(149, 101, 255, 0.14);
+    color: #bba2ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.dashboard-card h3 {
+    color: white;
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.dashboard-card p {
+    color: #aab4cb;
+    font-size: 14px;
+    line-height: 1.7;
+    flex-grow: 1;
+    margin: 0;
+}
+
+.dashboard-card button {
+    width: 100%;
+    padding: 13px 18px;
+}
+
+@media (max-width: 600px) {
+    .dashboard-boas-vindas,
+    .dashboard-card {
+        padding: 22px;
+    }
+
+    .dashboard-menu button {
+        padding: 9px 12px;
+    }
+}

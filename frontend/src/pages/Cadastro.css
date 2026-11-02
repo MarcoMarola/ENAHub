@@ -1,0 +1,126 @@
+
+.cadastro-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+}
+
+.cadastro-card {
+    width: 100%;
+    max-width: 470px;
+    background: #141c30;
+    border: 1px solid #2c3753;
+    border-radius: 22px;
+    padding: 36px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.cadastro-logo {
+    width: 55px;
+    height: 55px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #7851e8, #a16dff);
+    color: white;
+    font-size: 27px;
+    font-weight: 800;
+}
+
+.cadastro-card h1 {
+    color: white;
+    text-align: center;
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+.cadastro-subtitulo {
+    color: #aab4cb;
+    text-align: center;
+    font-size: 14px;
+}
+
+.cadastro-divisor {
+    border-top: 1px solid #2c3753;
+    margin: 25px 0;
+}
+
+.cadastro-card h2 {
+    color: white;
+    font-size: 23px;
+    margin-bottom: 8px;
+}
+
+.cadastro-descricao {
+    color: #aab4cb;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.cadastro-campo {
+    margin-bottom: 20px;
+}
+
+.cadastro-campo label {
+    display: block;
+    color: #d5dcec;
+    font-size: 14px;
+    margin-bottom: 9px;
+}
+
+.cadastro-campo input {
+    width: 100%;
+    padding: 13px;
+    border-radius: 12px;
+    border: 1px solid #303b57;
+    background: #19223a;
+    color: white;
+}
+
+.cadastro-campo input:focus {
+    border-color: #9565ff;
+    outline: none;
+}
+
+.cadastro-enviar {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px;
+}
+
+.cadastro-login {
+    text-align: center;
+    color: #aab4cb;
+    margin: 25px 0 0;
+    font-size: 14px;
+}
+
+.cadastro-login button {
+    display: inline;
+    width: auto;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    color: #bba2ff;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.cadastro-login button:hover {
+    background: transparent;
+    box-shadow: none;
+    color: #d3c1ff;
+}
+
+@media (max-width: 600px) {
+    .cadastro-card {
+        padding: 25px 20px;
+    }
+}

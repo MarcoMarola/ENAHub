@@ -1,0 +1,127 @@
+
+.historico-page {
+    padding-top: 36px;
+    padding-bottom: 70px;
+}
+
+.historico-voltar {
+    background: #19223a;
+    border: 1px solid #303c58;
+    box-shadow: none;
+    margin-bottom: 28px;
+}
+
+.historico-header {
+    background: linear-gradient(120deg, #1c2445, #151b32);
+    border: 1px solid #30385b;
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 25px;
+}
+
+.historico-header span {
+    color: #c4adff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.historico-header h1 {
+    color: white;
+    margin: 12px 0;
+}
+
+.historico-header p {
+    color: #aebbd5;
+    margin-bottom: 0;
+}
+
+.historico-resumo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.historico-resumo div,
+.historico-lista,
+.historico-vazio {
+    background: #141c30;
+    border: 1px solid #2c3753;
+    border-radius: 18px;
+    padding: 25px;
+}
+
+.historico-resumo span {
+    display: block;
+    color: #aab4cb;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.historico-resumo strong {
+    color: white;
+    font-size: 28px;
+}
+
+.historico-lista h2 {
+    color: white;
+    font-size: 21px;
+    margin-bottom: 22px;
+}
+
+.historico-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    color: #d5dcec;
+}
+
+.historico-tabela th {
+    color: #aab4cb;
+    background: #1c2740;
+    font-size: 13px;
+    padding: 16px;
+    text-align: left;
+}
+
+.historico-tabela td {
+    padding: 18px 16px;
+    border-bottom: 1px solid #293550;
+}
+
+.historico-tabela tbody tr:hover {
+    background: #1b2640;
+}
+
+.historico-nota {
+    color: #c4adff;
+    font-weight: 700;
+}
+
+.historico-vazio {
+    text-align: center;
+    padding: 45px 20px;
+}
+
+.historico-vazio h3 {
+    color: white;
+}
+
+.historico-vazio p {
+    color: #aab4cb;
+}
+
+@media (max-width: 768px) {
+    .historico-resumo {
+        grid-template-columns: 1fr;
+    }
+
+    .historico-header,
+    .historico-lista {
+        padding: 20px;
+    }
+
+    .historico-tabela {
+        min-width: 600px;
+    }
+}

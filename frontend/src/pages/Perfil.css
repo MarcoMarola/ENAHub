@@ -1,0 +1,156 @@
+
+.perfil-page {
+    max-width: 760px;
+    padding-top: 36px;
+    padding-bottom: 70px;
+}
+
+.perfil-voltar {
+    background: #19223a;
+    border: 1px solid #303c58;
+    box-shadow: none;
+    margin-bottom: 28px;
+}
+
+.perfil-header {
+    background: linear-gradient(120deg, #1c2445, #151b32);
+    border: 1px solid #30385b;
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 25px;
+}
+
+.perfil-header span {
+    color: #c4adff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.perfil-header h1 {
+    color: white;
+    margin: 12px 0;
+}
+
+.perfil-header p {
+    color: #aebbd5;
+    margin: 0;
+}
+
+.perfil-card,
+.perfil-perigo {
+    background: #141c30;
+    border: 1px solid #2c3753;
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 22px;
+}
+
+.perfil-identidade {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding-bottom: 25px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #2c3753;
+}
+
+.perfil-avatar {
+    width: 65px;
+    height: 65px;
+    flex-shrink: 0;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #7851e8, #a16dff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.perfil-identidade h2 {
+    color: white;
+    font-size: 21px;
+    margin: 0 0 5px;
+}
+
+.perfil-identidade p {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.perfil-card h3 {
+    color: white;
+    font-size: 20px;
+}
+
+.perfil-card > p,
+.perfil-perigo p {
+    color: #aab4cb;
+    margin-bottom: 25px;
+}
+
+.perfil-campo {
+    margin-bottom: 22px;
+}
+
+.perfil-campo label {
+    display: block;
+    color: #d5dcec;
+    margin-bottom: 9px;
+}
+
+.perfil-campo input {
+    width: 100%;
+    background: #19223a;
+    border: 1px solid #303b57;
+    border-radius: 12px;
+    padding: 13px;
+    color: white;
+}
+
+.perfil-campo input:focus {
+    border-color: #9565ff;
+    outline: none;
+}
+
+.perfil-campo input:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.perfil-campo small {
+    display: block;
+    color: #aab4cb;
+    margin-top: 8px;
+}
+
+.perfil-perigo {
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.perfil-perigo h3 {
+    color: #fca5a5;
+    font-size: 19px;
+}
+
+.perfil-perigo button {
+    background: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    box-shadow: none;
+}
+
+.perfil-perigo button:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.2);
+    box-shadow: none;
+}
+
+@media (max-width: 600px) {
+    .perfil-header,
+    .perfil-card,
+    .perfil-perigo {
+        padding: 20px;
+    }
+}

@@ -1,28 +1,24 @@
 
 import { useEffect, useState } from 'react';
+import './Dashboard.css';
 
-function Dashboard({ usuario, onSair, onEstudar, onHistorico }) {
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+function Dashboard({ usuario, onSair, onEstudar, onHistorico, onPerfil }) {
     const [cursos, setCursos] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
 
-    // Buscar cursos no backend
     useEffect(() => {
         const carregarCursos = async () => {
             try {
-                const resposta = await fetch(
-                    'http://localhost:3000/cursos'
-                );
-
-                if (!resposta.ok) {
-                    throw new Error('Erro ao buscar cursos.');
-                }
+                const resposta = await fetch(`${API_URL}/cursos`);
+                if (!resposta.ok) throw new Error('Erro ao buscar cursos.');
 
                 const dados = await resposta.json();
                 setCursos(dados);
-
-            } catch (erro) {
-                console.error('Erro ao carregar cursos:', erro);
+            } catch (err) {
+                console.error('Erro ao carregar cursos:', err);
                 setErro('Não foi possível carregar os cursos.');
             } finally {
                 setCarregando(false);
@@ -32,84 +28,86 @@ function Dashboard({ usuario, onSair, onEstudar, onHistorico }) {
         carregarCursos();
     }, []);
 
+    const obterIcone = (nome) => {
+        const valor = nome.toLowerCase();
+
+        if (valor.includes('computação')) return '⌘';
+        if (valor.includes('software')) return '</>';
+        if (valor.includes('informação')) return '▤';
+        if (valor.includes('administração')) return '◈';
+        return '✦';
+    };
+
     return (
-        <div className="container py-4">
-            {/* Cabeçalho */}
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h1>ENAHub</h1>
-
-                <div className="d-flex gap-2">
-                    <button
-                        className="btn btn-outline-primary"
-                        onClick={onHistorico}
-                    >
-                        Histórico
-                    </button>
-
-                    <button
-                        className="btn btn-outline-danger"
-                        onClick={onSair}
-                    >
-                        Sair
-                    </button>
-                </div>
-            </div>
-
-            {/* Boas-vindas */}
-            <h2>Bem-vindo, {usuario.nome}!</h2>
-
-            <p className="text-muted">
-                Escolha um curso para começar a estudar para o ENADE.
-            </p>
-
-            {/* Cursos */}
-            <h3 className="mt-4 mb-3">
-                Cursos disponíveis
-            </h3>
-
-            {carregando && (
-                <p>Carregando cursos...</p>
-            )}
-
-            {erro && (
-                <div className="alert alert-danger">
-                    {erro}
-                </div>
-            )}
-
-            {!carregando && !erro && cursos.length === 0 && (
-                <div className="alert alert-info">
-                    Nenhum curso disponível no momento.
-                </div>
-            )}
-
-            <div className="row g-3">
-                {cursos.map((curso) => (
-                    <div
-                        className="col-md-6"
-                        key={curso.id}
-                    >
-                        <div className="card h-100 shadow-sm">
-                            <div className="card-body">
-                                <h5 className="card-title">
-                                    {curso.nome}
-                                </h5>
-
-                                <p className="card-text text-muted">
-                                    Prepare-se para o ENADE com questões do seu curso.
-                                </p>
-
-                                <button
-                                    className="btn btn-primary"
-                                    onClick={() => onEstudar(curso)}
-                                >
-                                    Estudar
-                                </button>
-                            </div>
-                        </div>
+        <div className="dashboard-page">
+            <header className="dashboard-nav">
+                <div className="container dashboard-nav-conteudo">
+                    <div className="dashboard-marca">
+                        <div className="dashboard-logo">E</div>
+                        <h1>ENAHub</h1>
                     </div>
-                ))}
-            </div>
+
+                    <nav className="dashboard-menu">
+                        <button onClick={onHistorico}>Histórico</button>
+                        <button onClick={onPerfil}>Meu Perfil</button>
+                        <button className="dashboard-sair" onClick={onSair}>
+                            Sair
+                        </button>
+                    </nav>
+                </div>
+            </header>
+
+            <main className="container dashboard-conteudo">
+                <section className="dashboard-boas-vindas">
+                    <span>SEU ESPAÇO DE ESTUDOS</span>
+                    <h2>Bem-vindo, {usuario.nome}!</h2>
+                    <p>
+                        Continue sua preparação para o ENADE.
+                        Escolha um curso, pratique com questões
+                        e acompanhe sua evolução.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 className="dashboard-titulo">Cursos disponíveis</h2>
+                    <p className="dashboard-subtitulo">
+                        Escolha sua área de conhecimento para começar.
+                    </p>
+
+                    {carregando && <p>Carregando cursos...</p>}
+                    {erro && <div className="alert alert-danger">{erro}</div>}
+
+                    {!carregando && !erro && cursos.length === 0 && (
+                        <div className="alert alert-info">
+                            Nenhum curso disponível no momento.
+                        </div>
+                    )}
+
+                    {!carregando && !erro && (
+                        <div className="row g-4">
+                            {cursos.map(curso => (
+                                <div className="col-12 col-md-6" key={curso.id}>
+                                    <article className="dashboard-card">
+                                        <div className="dashboard-icone">
+                                            {obterIcone(curso.nome)}
+                                        </div>
+
+                                        <h3>{curso.nome}</h3>
+                                        <p>
+                                            Prepare-se para o ENADE com questões
+                                            selecionadas para sua área de conhecimento.
+                                        </p>
+
+                                        <button onClick={() => onEstudar(curso)}>
+                                            Começar a estudar →
+                                        </button>
+                                    </article>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </section>
+            </main>
         </div>
     );
 }

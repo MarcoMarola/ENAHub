@@ -1,5 +1,8 @@
 
 import { useState } from 'react';
+import './Cadastro.css';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 function Cadastro({ onVoltar }) {
     const [nome, setNome] = useState('');
@@ -11,43 +14,29 @@ function Cadastro({ onVoltar }) {
 
     const cadastrar = async (evento) => {
         evento.preventDefault();
-
         setMensagem('');
         setSucesso(false);
         setCarregando(true);
 
         try {
-            const resposta = await fetch(
-                'http://localhost:3000/usuarios',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        nome,
-                        email,
-                        senha
-                    })
-                }
-            );
+            const resposta = await fetch(`${API_URL}/usuarios`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome, email, senha })
+            });
 
             const dados = await resposta.json();
 
             if (!resposta.ok) {
-                throw new Error(
-                    dados.mensagem || 'Erro ao cadastrar usuário.'
-                );
+                throw new Error(dados.mensagem || 'Erro ao cadastrar usuário.');
             }
 
             setSucesso(true);
-            setMensagem('Cadastro realizado com sucesso!');
+            setMensagem('Cadastro realizado com sucesso! Você já pode entrar.');
             setNome('');
             setEmail('');
             setSenha('');
-
         } catch (erro) {
-            console.error('Erro no cadastro:', erro);
             setMensagem(erro.message);
         } finally {
             setCarregando(false);
@@ -55,91 +44,90 @@ function Cadastro({ onVoltar }) {
     };
 
     return (
-        <div className="container d-flex justify-content-center align-items-center min-vh-100">
-            <div
-                className="card shadow p-4"
-                style={{ width: '450px', maxWidth: '100%' }}
-            >
-                <h1 className="text-center mb-2">ENAHub</h1>
+        <main className="cadastro-page">
+            <section className="cadastro-card">
+                <div className="cadastro-logo">E</div>
 
-                <h4 className="text-center mb-4">
-                    Criar conta
-                </h4>
+                <h1>ENAHub</h1>
+                <p className="cadastro-subtitulo">
+                    Sua jornada de preparação para o ENADE começa aqui.
+                </p>
+
+                <div className="cadastro-divisor" />
+
+                <h2>Criar conta</h2>
+                <p className="cadastro-descricao">
+                    Preencha seus dados para começar a estudar.
+                </p>
 
                 {mensagem && (
                     <div
-                        className={
-                            sucesso
-                                ? 'alert alert-success'
-                                : 'alert alert-danger'
-                        }
+                        className={`alert ${sucesso ? 'alert-success' : 'alert-danger'}`}
+                        role="alert"
                     >
                         {mensagem}
                     </div>
                 )}
 
                 <form onSubmit={cadastrar}>
-                    <div className="mb-3">
-                        <label htmlFor="nome" className="form-label">
-                            Nome completo
-                        </label>
+                    <div className="cadastro-campo">
+                        <label htmlFor="nome">Nome completo</label>
                         <input
                             id="nome"
                             type="text"
-                            className="form-control"
                             value={nome}
                             onChange={(e) => setNome(e.target.value)}
+                            placeholder="Digite seu nome completo"
+                            maxLength={100}
+                            autoComplete="name"
                             required
                         />
                     </div>
 
-                    <div className="mb-3">
-                        <label htmlFor="emailCadastro" className="form-label">
-                            E-mail
-                        </label>
+                    <div className="cadastro-campo">
+                        <label htmlFor="emailCadastro">E-mail</label>
                         <input
                             id="emailCadastro"
                             type="email"
-                            className="form-control"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            placeholder="seuemail@exemplo.com"
+                            autoComplete="email"
                             required
                         />
                     </div>
 
-                    <div className="mb-3">
-                        <label htmlFor="senhaCadastro" className="form-label">
-                            Senha
-                        </label>
+                    <div className="cadastro-campo">
+                        <label htmlFor="senhaCadastro">Senha</label>
                         <input
                             id="senhaCadastro"
                             type="password"
-                            className="form-control"
                             value={senha}
                             onChange={(e) => setSenha(e.target.value)}
+                            placeholder="Mínimo de 8 caracteres"
                             minLength={8}
+                            autoComplete="new-password"
                             required
                         />
                     </div>
 
                     <button
                         type="submit"
-                        className="btn btn-primary w-100"
+                        className="cadastro-enviar"
                         disabled={carregando}
                     >
-                        {carregando ? 'Cadastrando...' : 'Criar conta'}
+                        {carregando ? 'Cadastrando...' : 'Criar minha conta'}
                     </button>
                 </form>
 
-                <button
-                    type="button"
-                    className="btn btn-link mt-3"
-                    onClick={onVoltar}
-                >
-                    Já tenho uma conta
-                </button>
-            </div>
-        </div>
+                <p className="cadastro-login">
+                    Já tem uma conta?{' '}
+                    <button type="button" onClick={onVoltar}>
+                        Entrar
+                    </button>
+                </p>
+            </section>
+        </main>
     );
 }
 

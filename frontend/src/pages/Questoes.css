@@ -1,0 +1,159 @@
+
+.questoes-page {
+    padding-top: 36px;
+    padding-bottom: 70px;
+}
+
+.questoes-voltar {
+    background: #19223a;
+    border: 1px solid #303c58;
+    box-shadow: none;
+    margin-bottom: 28px;
+}
+
+.questoes-header {
+    background: linear-gradient(120deg, #1c2445, #151b32);
+    border: 1px solid #30385b;
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 25px;
+}
+
+.questoes-header span,
+.questoes-numero {
+    color: #c4adff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.questoes-header h1 {
+    color: white;
+    margin: 12px 0;
+}
+
+.questoes-header p {
+    color: #aebbd5;
+}
+
+.questoes-progresso,
+.questoes-card,
+.questoes-resultado {
+    background: #141c30;
+    border: 1px solid #2c3753;
+    border-radius: 18px;
+    padding: 26px;
+    margin-bottom: 22px;
+}
+
+.questoes-progresso strong,
+.questoes-card strong {
+    color: white;
+}
+
+.questoes-progresso span {
+    color: #c4adff;
+}
+
+.questoes-barra {
+    background: #29334d;
+    height: 10px;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.questoes-barra div {
+    height: 100%;
+    background: linear-gradient(90deg, #7851e8, #ae85ff);
+    transition: width 0.3s;
+}
+
+.questoes-numero {
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.questoes-enunciado {
+    color: white;
+    font-size: 17px;
+    white-space: pre-wrap;
+    margin-bottom: 22px;
+}
+
+.questoes-alternativa {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
+    border: 1px solid #303b57;
+    border-radius: 12px;
+    background: #19223a;
+    cursor: pointer;
+    color: #c3cde0;
+}
+
+.questoes-alternativa.selecionada {
+    background: rgba(149, 101, 255, 0.16);
+    border-color: #9565ff;
+}
+
+.questoes-alternativa input {
+    width: 18px;
+    flex-shrink: 0;
+    accent-color: #9565ff;
+}
+
+.questoes-alternativa strong {
+    background: #293550;
+    border-radius: 8px;
+    padding: 7px 11px;
+}
+
+.questoes-resultado h2 {
+    color: white;
+    margin-bottom: 22px;
+}
+
+.questoes-estatisticas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.questoes-estatisticas div {
+    background: #1c2740;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.questoes-estatisticas strong {
+    display: block;
+    color: white;
+    font-size: 28px;
+}
+
+.questoes-estatisticas span {
+    color: #aab4cb;
+}
+
+.questoes-acoes {
+    display: flex;
+    justify-content: flex-end;
+}
+
+@media (max-width: 600px) {
+    .questoes-header,
+    .questoes-card,
+    .questoes-progresso,
+    .questoes-resultado {
+        padding: 20px;
+    }
+
+    .questoes-estatisticas {
+        grid-template-columns: 1fr;
+    }
+}

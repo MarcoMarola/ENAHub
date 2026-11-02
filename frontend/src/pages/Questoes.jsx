@@ -1,290 +1,173 @@
 
 import { useEffect, useState } from 'react';
+import './Questoes.css';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 function Questoes({ curso, onVoltar }) {
     const [questoes, setQuestoes] = useState([]);
     const [respostas, setRespostas] = useState({});
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
-
     const [finalizando, setFinalizando] = useState(false);
     const [resultado, setResultado] = useState(null);
-    const [erroFinalizacao, setErroFinalizacao] = useState('');
 
-    // Carregar questões do curso
     useEffect(() => {
-        const carregarQuestoes = async () => {
-            setCarregando(true);
-            setErro('');
-            setRespostas({});
-            setResultado(null);
-            setErroFinalizacao('');
+        setCarregando(true);
+        setErro('');
+        setRespostas({});
+        setResultado(null);
 
-            try {
-                const resposta = await fetch(
-                    `http://localhost:3000/questoes?curso_id=${curso.id}`
-                );
-
-                if (!resposta.ok) {
-                    throw new Error('Erro ao buscar questões.');
-                }
-
-                const dados = await resposta.json();
-                setQuestoes(dados);
-
-            } catch (erro) {
-                console.error('Erro ao carregar questões:', erro);
-                setErro('Não foi possível carregar as questões.');
-            } finally {
-                setCarregando(false);
-            }
-        };
-
-        carregarQuestoes();
+        fetch(`${API_URL}/questoes?curso_id=${curso.id}`)
+            .then(res => {
+                if (!res.ok) throw new Error('Erro ao carregar questões.');
+                return res.json();
+            })
+            .then(setQuestoes)
+            .catch(err => setErro(err.message))
+            .finally(() => setCarregando(false));
     }, [curso.id]);
 
-    // Selecionar alternativa
-    const selecionarResposta = (questaoId, alternativa) => {
-        if (resultado || finalizando) return;
-
-        setRespostas((anteriores) => ({
-            ...anteriores,
-            [questaoId]: alternativa
-        }));
-    };
-
-    // Finalizar e corrigir simulado
-    const finalizarSimulado = async () => {
+    const finalizar = async () => {
         if (Object.keys(respostas).length !== questoes.length) {
-            setErroFinalizacao(
-                'Responda todas as questões antes de finalizar.'
-            );
+            setErro('Responda todas as questões antes de finalizar.');
             return;
         }
 
         setFinalizando(true);
-        setErroFinalizacao('');
+        setErro('');
 
         try {
             const token = sessionStorage.getItem('token');
-
-            if (!token) {
-                throw new Error(
-                    'Sessão expirada. Faça login novamente.'
-                );
-            }
+            if (!token) throw new Error('Sessão expirada. Faça login novamente.');
 
             const headers = {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`
             };
 
-            // Criar simulado no backend
-            const respostaCriacao = await fetch(
-                'http://localhost:3000/simulados',
-                {
-                    method: 'POST',
-                    headers
-                }
-            );
+            const criacao = await fetch(`${API_URL}/simulados`, {
+                method: 'POST',
+                headers
+            });
 
-            const dadosCriacao = await respostaCriacao.json();
+            const dadosCriacao = await criacao.json();
+            if (!criacao.ok) throw new Error(dadosCriacao.mensagem || 'Erro ao criar simulado.');
 
-            if (!respostaCriacao.ok) {
-                throw new Error(
-                    dadosCriacao.mensagem ||
-                    'Erro ao criar simulado.'
-                );
-            }
+            const id = dadosCriacao.id ?? dadosCriacao.simulado?.id;
+            if (!id) throw new Error('ID do simulado não encontrado.');
 
-            const simuladoId =
-                dadosCriacao.id ?? dadosCriacao.simulado?.id;
+            const correcao = await fetch(`${API_URL}/simulados/${id}/respostas`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({
+                    respostas: questoes.map(q => ({
+                        questao_id: q.id,
+                        resposta: respostas[q.id]
+                    }))
+                })
+            });
 
-            if (!simuladoId) {
-                throw new Error(
-                    'O servidor não retornou o ID do simulado.'
-                );
-            }
+            const dados = await correcao.json();
+            if (!correcao.ok) throw new Error(dados.mensagem || 'Erro ao corrigir simulado.');
 
-            // Organizar respostas para envio
-            const respostasEnviadas = questoes.map((questao) => ({
-                questao_id: questao.id,
-                resposta: respostas[questao.id]
-            }));
-
-            // Enviar respostas para correção
-            const respostaCorrecao = await fetch(
-                `http://localhost:3000/simulados/${simuladoId}/respostas`,
-                {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify({
-                        respostas: respostasEnviadas
-                    })
-                }
-            );
-
-            const dadosCorrecao = await respostaCorrecao.json();
-
-            if (!respostaCorrecao.ok) {
-                throw new Error(
-                    dadosCorrecao.mensagem ||
-                    'Erro ao corrigir simulado.'
-                );
-            }
-
-            setResultado(dadosCorrecao.resultado);
-            console.log('RESULTADO DO BACKEND:', dadosCorrecao);
-
-        } catch (erro) {
-            console.error('Erro ao finalizar simulado:', erro);
-            setErroFinalizacao(erro.message);
+            setResultado(dados.resultado);
+        } catch (err) {
+            setErro(err.message);
         } finally {
             setFinalizando(false);
         }
     };
 
+    const respondidas = Object.keys(respostas).length;
+    const progresso = questoes.length ? respondidas / questoes.length * 100 : 0;
+
     return (
-        <div className="container py-4">
-            <button
-                className="btn btn-outline-secondary mb-4"
-                onClick={onVoltar}
-                disabled={finalizando}
-            >
-                Voltar aos cursos
+        <main className="container questoes-page">
+            <button className="questoes-voltar" onClick={onVoltar} disabled={finalizando}>
+                ← Voltar aos cursos
             </button>
 
-            <h1>Questões — {curso.nome}</h1>
+            <header className="questoes-header">
+                <span>PREPARAÇÃO PARA O ENADE</span>
+                <h1>{curso.nome}</h1>
+                <p>Teste seus conhecimentos e acompanhe seu desempenho.</p>
+            </header>
 
-            <p className="text-muted">
-                Prepare-se para o ENADE respondendo às questões.
-            </p>
-
-            {carregando && (
-                <p>Carregando questões...</p>
-            )}
-
-            {erro && (
-                <div className="alert alert-danger">
-                    {erro}
-                </div>
-            )}
+            {carregando && <p>Carregando questões...</p>}
+            {erro && <div className="alert alert-danger">{erro}</div>}
 
             {!carregando && !erro && questoes.length === 0 && (
-                <div className="alert alert-info">
-                    Ainda não existem questões cadastradas para este curso.
-                </div>
+                <p>Nenhuma questão disponível para este curso.</p>
             )}
 
-            {!carregando && !erro && questoes.length > 0 && (
+            {!carregando && questoes.length > 0 && (
                 <>
-                    <p>
-                        <strong>Questões respondidas:</strong>{' '}
-                        {Object.keys(respostas).length} de {questoes.length}
-                    </p>
+                    <section className="questoes-progresso">
+                        <div className="d-flex justify-content-between gap-2">
+                            <strong>Progresso do simulado</strong>
+                            <span>{respondidas}/{questoes.length} respondidas</span>
+                        </div>
+                        <div className="questoes-barra">
+                            <div style={{ width: `${progresso}%` }} />
+                        </div>
+                    </section>
 
                     {questoes.map((questao, indice) => (
-                        <div
-                            className="card mb-3 shadow-sm"
-                            key={questao.id}
-                        >
-                            <div className="card-body">
-                                <h5 className="card-title">
-                                    Questão {indice + 1}
-                                </h5>
+                        <article className="questoes-card" key={questao.id}>
+                            <span className="questoes-numero">QUESTÃO {indice + 1}</span>
+                            <p className="questoes-enunciado">{questao.enunciado}</p>
 
-                                <p className="card-text">
-                                    {questao.enunciado}
-                                </p>
+                            {['a', 'b', 'c', 'd', 'e'].map(letra => {
+                                const alternativa = letra.toUpperCase();
+                                const selecionada = respostas[questao.id] === alternativa;
 
-                                {['a', 'b', 'c', 'd', 'e'].map((letra) => {
-                                    const alternativa = letra.toUpperCase();
-
-                                    return (
-                                        <div
-                                            className="form-check mb-2"
-                                            key={letra}
-                                        >
-                                            <input
-                                                type="radio"
-                                                id={`questao-${questao.id}-${letra}`}
-                                                name={`questao-${questao.id}`}
-                                                className="form-check-input"
-                                                value={alternativa}
-                                                checked={
-                                                    respostas[questao.id] === alternativa
-                                                }
-                                                onChange={() =>
-                                                    selecionarResposta(
-                                                        questao.id,
-                                                        alternativa
-                                                    )
-                                                }
-                                                disabled={
-                                                    !!resultado || finalizando
-                                                }
-                                            />
-
-                                            <label
-                                                className="form-check-label"
-                                                htmlFor={`questao-${questao.id}-${letra}`}
-                                            >
-                                                {alternativa}){' '}
-                                                {questao[`alternativa_${letra}`]}
-                                            </label>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
+                                return (
+                                    <label
+                                        key={letra}
+                                        className={`questoes-alternativa ${selecionada ? 'selecionada' : ''}`}
+                                    >
+                                        <input
+                                            type="radio"
+                                            name={`questao-${questao.id}`}
+                                            checked={selecionada}
+                                            disabled={!!resultado || finalizando}
+                                            onChange={() => {
+                                                setRespostas(prev => ({
+                                                    ...prev,
+                                                    [questao.id]: alternativa
+                                                }));
+                                                setErro('');
+                                            }}
+                                        />
+                                        <strong>{alternativa}</strong>
+                                        <span>{questao[`alternativa_${letra}`]}</span>
+                                    </label>
+                                );
+                            })}
+                        </article>
                     ))}
 
-                    {erroFinalizacao && (
-                        <div className="alert alert-danger">
-                            {erroFinalizacao}
-                        </div>
-                    )}
-
                     {resultado ? (
-                        <div className="alert alert-success">
-                            <h4>Simulado finalizado!</h4>
-
-                            <p>
-                                <strong>Acertos:</strong>{' '}
-                                {resultado.acertos}
-                            </p>
-
-                            <p>
-                                <strong>Erros:</strong>{' '}
-                                {resultado.erros}
-                            </p>
-
-                            <p>
-                                <strong>Nota:</strong>{' '}
-                                {resultado.percentual}%
-                            </p>
-
-                            <button
-                                className="btn btn-primary mt-2"
-                                onClick={onVoltar}
-                            >
-                                Voltar aos cursos
+                        <section className="questoes-resultado">
+                            <h2>Simulado concluído!</h2>
+                            <div className="questoes-estatisticas">
+                                <div><strong>{resultado.acertos}</strong><span>Acertos</span></div>
+                                <div><strong>{resultado.erros}</strong><span>Erros</span></div>
+                                <div><strong>{resultado.percentual}%</strong><span>Aproveitamento</span></div>
+                            </div>
+                            <button onClick={onVoltar}>Voltar aos cursos</button>
+                        </section>
+                    ) : (
+                        <div className="questoes-acoes">
+                            <button onClick={finalizar} disabled={finalizando || carregando}>
+                                {finalizando ? 'Corrigindo...' : 'Finalizar simulado'}
                             </button>
                         </div>
-                    ) : (
-                        <button
-                            className="btn btn-success mb-4"
-                            onClick={finalizarSimulado}
-                            disabled={finalizando}
-                        >
-                            {finalizando
-                                ? 'Corrigindo...'
-                                : 'Finalizar simulado'}
-                        </button>
                     )}
                 </>
             )}
-        </div>
+        </main>
     );
 }
 
