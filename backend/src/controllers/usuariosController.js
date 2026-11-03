@@ -56,7 +56,7 @@ const loginUsuario = async (req, res) => {
         const { email, senha } = req.body;
 
         const [usuarios] = await db.query(
-            'SELECT id, nome, email, senha, curso_id FROM usuarios WHERE email = ?',
+            'SELECT id, nome, email, senha, curso_id, perfil FROM usuarios WHERE email = ?',
             [email]
         );
 
@@ -67,6 +67,7 @@ const loginUsuario = async (req, res) => {
         }
 
         const usuario = usuarios[0];
+
         const senhaCorreta = await bcrypt.compare(
             senha,
             usuario.senha
@@ -83,7 +84,8 @@ const loginUsuario = async (req, res) => {
                 id: usuario.id,
                 nome: usuario.nome,
                 email: usuario.email,
-                curso_id: usuario.curso_id
+                curso_id: usuario.curso_id,
+                perfil: usuario.perfil
             },
             process.env.JWT_SECRET,
             {
@@ -99,7 +101,8 @@ const loginUsuario = async (req, res) => {
                 id: usuario.id,
                 nome: usuario.nome,
                 email: usuario.email,
-                curso_id: usuario.curso_id
+                curso_id: usuario.curso_id,
+                perfil: usuario.perfil
             }
         });
     } catch (erro) {

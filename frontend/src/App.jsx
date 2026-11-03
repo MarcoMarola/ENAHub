@@ -5,6 +5,7 @@ import Questoes from './pages/Questoes';
 import Historico from './pages/Historico';
 import Cadastro from './pages/Cadastro';
 import Perfil from './pages/Perfil';
+import Admin from './pages/Admin';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -114,6 +115,9 @@ function App() {
     }
 
     if (usuario) {
+        if (usuario.perfil === 'admin'){
+            return< Admin onSair={sair} />;
+        }
         if (mostrarPerfil) {
             return (
                 <Perfil

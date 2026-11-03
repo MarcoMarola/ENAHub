@@ -14,7 +14,6 @@ const autenticarToken = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
-// Middleware para validar os dados recebidos
 const validarDados = (req, res, next) => {
     const erros = validationResult(req);
 
@@ -28,7 +27,6 @@ const validarDados = (req, res, next) => {
     next();
 };
 
-// CREATE - Cadastrar usuário
 router.post(
     '/',
     [
@@ -57,7 +55,6 @@ router.post(
     cadastrarUsuario
 );
 
-// LOGIN - Autenticar usuário
 router.post(
     '/login',
     [
@@ -73,14 +70,12 @@ router.post(
     loginUsuario
 );
 
-// READ - Consultar dados do usuário autenticado
 router.get(
     '/',
     autenticarToken,
     listarUsuarios
 );
 
-// GET /usuarios/me - Perfil autenticado
 router.get(
     '/me',
     autenticarToken,
@@ -91,7 +86,6 @@ router.get(
     }
 );
 
-// UPDATE - Atualizar nome do usuário
 router.put(
     '/:id',
     autenticarToken,
@@ -109,7 +103,6 @@ router.put(
     atualizarUsuario
 );
 
-// DELETE - Excluir usuário
 router.delete(
     '/:id',
     autenticarToken,
